@@ -1,4 +1,7 @@
 package hu.bme.aut.android.recipesearch.persistence
 
-class AppDatabase {
+import androidx.room.RoomDatabase
+
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun recipeDao(): RecipeDao
 }
