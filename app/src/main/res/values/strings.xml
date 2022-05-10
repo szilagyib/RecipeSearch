@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RecipeSearch</string>
+    <string name="database">RecipeDatabase</string>
 </resources>
