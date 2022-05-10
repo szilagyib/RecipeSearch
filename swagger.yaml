@@ -1,0 +1,159 @@
+swagger: "2.0"
+info:
+  description: "API for Recipe Search application using TheMealDB open API"
+  version: "1.0.0"
+  title: "Recipe Search"
+host: "www.themealdb.com"
+basePath: "/api/json/v1/1"
+tags:
+- name: "recipe"
+schemes:
+- "https"
+- "http"
+paths:
+  /search.php:
+    get:
+      tags:
+      - "recipe"
+      summary: "Search recipe by name"
+      operationId: "searchByName"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "s"
+        in: "query"
+        description: "Name of the recipe to search"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "List of recipes containing the given name "
+          schema:
+              $ref: "#/definitions/Meals"
+definitions:
+  Meals:
+    type: "object"
+    properties:
+      meals:
+        type: "array"
+        items:
+          $ref: "#/definitions/Meal"
+  Meal:
+    type: "object"
+    properties:
+      idMeal:
+        type: "integer"
+        format: "int64"
+      strMeal:
+        type: "string"
+      strDrinkAlternate:
+        type: "string"
+      strCategory:
+        type: "string"
+      strArea:
+        type: "string"
+      strInstructions:
+        type: "string"
+      strMealThumb:
+        type: "string"
+      strTags:
+        type: "string"
+      strYoutube:
+        type: "string"
+      strIngredient1:
+        type: "string"
+      strIngredient2:
+        type: "string"
+      strIngredient3:
+        type: "string"
+      strIngredient4:
+        type: "string"
+      strIngredient5:
+        type: "string"
+      strIngredient6:
+        type: "string"
+      strIngredient7:
+        type: "string"
+      strIngredient8:
+        type: "string"
+      strIngredient9:
+        type: "string"
+      strIngredient10:
+        type: "string"
+      strIngredient11:
+        type: "string"
+      strIngredient12:
+        type: "string"
+      strIngredient13:
+        type: "string"
+      strIngredient14:
+        type: "string"
+      strIngredient15:
+        type: "string"
+      strIngredient16:
+        type: "string"
+      strIngredient17:
+        type: "string"
+      strIngredient18:
+        type: "string"
+      strIngredient19:
+        type: "string"
+      strIngredient20:
+        type: "string"
+      strMeasure1:
+        type: "string"
+      strMeasure2:
+        type: "string"
+      strMeasure3:
+        type: "string"
+      strMeasure4:
+        type: "string"
+      strMeasure5:
+        type: "string"
+      strMeasure6:
+        type: "string"
+      strMeasure7:
+        type: "string"
+      strMeasure8:
+        type: "string"
+      strMeasure9:
+        type: "string"
+      strMeasure10:
+        type: "string"
+      strMeasure11:
+        type: "string"
+      strMeasure12:
+        type: "string"
+      strMeasure13:
+        type: "string"
+      strMeasure14:
+        type: "string"
+      strMeasure15:
+        type: "string"
+      strMeasure16:
+        type: "string"
+      strMeasure17:
+        type: "string"
+      strMeasure18:
+        type: "string"
+      strMeasure19:
+        type: "string"
+      strMeasure20:
+        type: "string"
+      strSource:
+        type: "string"
+      strImageSource:
+        type: "string"
+      strCreativeCommonsConfirmed":
+        type: "string"
+      dateModified:
+        type: "string"
+    xml:
+      name: "Meal"
+externalDocs:
+  description: "Find out more about TheMealDB"
+  url: "https://www.themealdb.com/api.php"
