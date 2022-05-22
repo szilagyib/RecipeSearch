@@ -5,6 +5,8 @@ import okhttp3.Response
 
 class RecipeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        return chain.proceed(chain.request())
+        val originalRequest = chain.request()
+        val request = originalRequest.newBuilder().url(originalRequest.url).build()
+        return chain.proceed(request)
     }
 }

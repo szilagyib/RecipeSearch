@@ -1,16 +1,16 @@
 package hu.bme.aut.android.recipesearch.ui.details
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -22,7 +22,22 @@ import hu.bme.aut.android.recipesearch.R
 import hu.bme.aut.android.recipesearch.model.Recipe
 
 @Composable
-fun RecipeDetails(recipe: Recipe) {
+fun RecipeDetails(
+    id: Long,
+    viewModel: DetailsViewModel
+) {
+    LaunchedEffect(id) {
+        viewModel.loadRecipeById(id)
+    }
+
+    val details: Recipe? by viewModel.recipeDetailsFlow.collectAsState(initial = null)
+    details?.let { recipe ->
+        RecipeDetailsBody(recipe)
+    }
+}
+
+@Composable
+fun RecipeDetailsBody(recipe: Recipe) {
     Surface(
         shape = RoundedCornerShape(8.dp),
         elevation = 8.dp
@@ -35,7 +50,7 @@ fun RecipeDetails(recipe: Recipe) {
             Text(
                 modifier = Modifier
                     .padding(4.dp),
-                text = recipe.name,
+                text = recipe.strMeal,
                 fontSize = 28.sp
             )
             AsyncImage(
@@ -43,7 +58,7 @@ fun RecipeDetails(recipe: Recipe) {
                     .fillMaxWidth()
                     .padding(4.dp)
                     .height(120.dp),
-                model = recipe.imageUrl,
+                model = recipe.strMealThumb,
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "user icon"
@@ -64,7 +79,7 @@ fun RecipeDetails(recipe: Recipe) {
                     .padding(4.dp)
             ) {
                 Text(
-                    text = recipe.instructions,
+                    text = recipe.strInstructions ?: "",
                     fontSize = 18.sp
                 )
             }
