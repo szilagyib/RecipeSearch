@@ -4,14 +4,13 @@ info:
   version: "1.0.0"
   title: "Recipe Search"
 host: "www.themealdb.com"
-basePath: "/api/json/v1/1"
 tags:
 - name: "recipe"
 schemes:
 - "https"
 - "http"
 paths:
-  /search.php:
+  /api/json/v1/1/search.php:
     get:
       tags:
       - "recipe"
