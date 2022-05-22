@@ -22,7 +22,7 @@ class RecipeDaoTest : LocalDatabase() {
     }
 
     @Test
-    fun insertAndLoadPosterListTest() = runBlocking {
+    fun insertAndLoadRecipesTest() = runBlocking {
         val mockDataList = listOf(Recipe.mock())
         recipeDao.insertRecipeList(mockDataList)
 
