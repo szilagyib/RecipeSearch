@@ -1,7 +1,7 @@
 package hu.bme.aut.android.recipesearch.ui.main
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.focusable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,13 +15,16 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -49,7 +52,7 @@ fun RecipeListItem(recipe: Recipe, onItemClick: (Recipe) -> Unit) {
                 .fillMaxWidth()
         ) {
             AsyncImage(
-                model = recipe.imageUrl,
+                model = recipe.strMealThumb,
                 placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = "user icon",
                 modifier = Modifier
@@ -60,7 +63,7 @@ fun RecipeListItem(recipe: Recipe, onItemClick: (Recipe) -> Unit) {
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .align(CenterVertically),
-                text = recipe.name,
+                text = recipe.strMeal,
                 fontSize = 22.sp
             )
         }
@@ -68,38 +71,46 @@ fun RecipeListItem(recipe: Recipe, onItemClick: (Recipe) -> Unit) {
 }
 
 @Composable
-fun RecipeList(recipes: List<Recipe>, navController: NavController) {
-    val textState = remember { mutableStateOf(TextFieldValue("")) }
-    Column {
-        SearchBar(state = textState)
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(colorResource(id = R.color.custom_green))) {
-            items(recipes) {
-                    recipe -> RecipeListItem(recipe) {
-                        selected -> navController
-                            .navigate("details/${selected.id}") {
-                                popUpTo("main") {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                        }
+fun RecipeList(r: List<Recipe>, navController: NavController, viewModel: MainViewModel) {
+    val recipes: List<Recipe> by viewModel.recipeList.collectAsState(initial = r)
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.custom_green))) {
+        items(recipes) {
+                recipe -> RecipeListItem(recipe) {
+                    selected -> navController
+                        .navigate("details/${selected.idMeal}") {
+                            popUpTo("main") {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                     }
-            }
+                }
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchBar(state: MutableState<TextFieldValue>) {
+fun SearchBar(state: MutableState<TextFieldValue>, viewModel: MainViewModel) {
+    val requester = remember { FocusRequester() }
     TextField(
         value = state.value,
         onValueChange = { value -> state.value = value },
         modifier = Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.custom_green))
+            .onKeyEvent {
+                if (it.key == Key.Enter) {
+                    viewModel.recipeName = state.value.toString()
+                    state.value = TextFieldValue("")
+                    true
+                } else false
+            }
+            .focusRequester(requester)
+            .focusable()
             .padding(4.dp),
         textStyle = TextStyle(
             color = Color.Black,
@@ -140,26 +151,24 @@ fun SearchBar(state: MutableState<TextFieldValue>) {
 }
 
 @Composable
-fun Navigation(recipes: List<Recipe>) {
+fun Navigation(viewModel : MainViewModel) {
+    val recipes: List<Recipe> by viewModel.recipeList.collectAsState(initial = listOf())
     val navController = rememberNavController()
-
-    fun getRecipeById(id: Long) : Recipe? {
-        for (recipe in recipes)
-            if (recipe.id == id)
-                return recipe
-        return null
-    }
+    val textState = remember { mutableStateOf(TextFieldValue("")) }
 
     NavHost(navController = navController, startDestination = "main") {
         composable("main") {
-            RecipeList(recipes, navController)
+            Column {
+                SearchBar(textState, viewModel)
+                RecipeList(recipes, navController, viewModel)
+            }
         }
         composable(
             "details/{recipeId}",
             arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
         ) { backStackEntry ->
             backStackEntry.arguments?.getString("recipeId")?.let { recipeId ->
-                RecipeDetails(getRecipeById(recipeId.toLong())!!)
+                RecipeDetails(recipeId.toLong(), hiltViewModel())
             }
         }
     }

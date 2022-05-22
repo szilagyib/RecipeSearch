@@ -1,17 +1,15 @@
 package hu.bme.aut.android.recipesearch.di
 
-import android.content.Context
+import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import hu.bme.aut.android.recipesearch.network.RecipeInterceptor
 import hu.bme.aut.android.recipesearch.network.RecipeService
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
@@ -19,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
+    fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(RecipeInterceptor())
             .build()
@@ -30,9 +28,9 @@ object NetworkModule {
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl("www.themealdb.com/api/json/v1/1")
+            .baseUrl("https://www.themealdb.com/")
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .build()
     }
 
