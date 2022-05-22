@@ -5,13 +5,15 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import hu.bme.aut.android.recipesearch.model.Recipe
-import rx.Observable
 
 @Dao
 interface RecipeDao {
     @Query("SELECT * FROM Recipe")
     suspend fun getRecipeList(): List<Recipe>
 
+    @Query("SELECT * FROM Recipe WHERE idMeal = :id_")
+    suspend fun getRecipe(id_: Long): Recipe?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRecipeList(recipeList: Observable<List<Recipe>>)
+    suspend fun insertRecipeList(recipeList: List<Recipe>)
 }
