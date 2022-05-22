@@ -148,7 +148,7 @@ definitions:
         type: "string"
       strImageSource:
         type: "string"
-      strCreativeCommonsConfirmed":
+      strCreativeCommonsConfirmed:
         type: "string"
       dateModified:
         type: "string"
