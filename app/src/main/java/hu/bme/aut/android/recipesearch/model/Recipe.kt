@@ -130,7 +130,7 @@ data class Recipe(
         )
     }
 
-    fun addIngredient(ingredient: String?, measure: String?) {
+    private fun addIngredient(ingredient: String?, measure: String?) {
         ingredient?.let {
             if(ingredient != "")
                 ingredients.add(Ingredient(ingredient, measure ?: ""))
